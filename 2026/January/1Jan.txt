@@ -1,0 +1,111 @@
+📌 Leetcode Daily – 01 January 2026
+
+🔍 Topic:
+Array - Math
+
+❓ Problem Statement:
+66. Plus One
+
+
+📝 Difficulty:
+⭐ Easy
+
+
+## 🤝 Support
+Want to Support a POTD or solution?  
+Way1: http://buymeacoffee.com/karthikverma
+Way2: https://ko-fi.com/karthikverma
+
+## 🔗 Connect With Me
+
+- 📺 YouTube: https://www.youtube.com/channel/UCUUPCqRPzEsX-KgM8i7E8Dg
+- 📸 Instagram: https://www.instagram.com/campusprepp/
+
+⭐ **Star this repo if it helps you!**
+
+
+🧠 Solution:
+Java Solution==========================================================
+class Solution {
+  public int[] plusOne(int[] digits) {
+    for (int i = digits.length - 1; i >= 0; i--) {
+      if (digits[i] < 9) {
+        ++digits[i];
+        return digits;
+      }
+      digits[i] = 0;
+    }
+
+    int[] ans = new int[digits.length + 1];
+    ans[0] = 1;
+    return ans;
+  }
+}
+
+Python Solution=========================================================
+class Solution:
+  def plusOne(self, digits: list[int]) -> list[int]:
+    for i, d in reversed(list(enumerate(digits))):
+      if d < 9:
+        digits[i] += 1
+        return digits
+      digits[i] = 0
+
+    return [1] + digits
+
+C++ Solution============================================================
+class Solution {
+ public:
+  vector<int> plusOne(vector<int>& digits) {
+    for (int i = digits.size() - 1; i >= 0; --i) {
+      if (digits[i] < 9) {
+        ++digits[i];
+        return digits;
+      }
+      digits[i] = 0;
+    }
+
+    digits.insert(digits.begin(), 1);
+    return digits;
+  }
+};
+
+JavaScript Solution=====================================================
+/**
+ * @param {number[]} digits
+ * @return {number[]}
+ */
+var plusOne = function(digits) {
+    for (let i = digits.length - 1; i >= 0; i--) {
+        if (digits[i] < 9) {
+            digits[i]++;
+            return digits;
+        }
+        digits[i] = 0;
+    }
+    return [1, ...digits];
+};
+
+
+
+Company Asked: 
+#Spotify
+#Amazon
+#Apple
+#ByteDance
+#Google
+#Adobe
+#Uber
+#Capital-one
+#Facebook
+#eBay
+#Bloomberg
+#Meta
+#Microsoft
+#Tiktok
+#Visa
+#Yahoo
+#Accenture
+#Agoda
+#Intuit
+#TCS
