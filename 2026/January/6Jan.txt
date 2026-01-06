@@ -1,14 +1,11 @@
 📌 Leetcode Daily – 06 January 2026
 
-🔍 Topic:
-Array - Hash Table - Weekly Contest 116
-
 ❓ Problem Statement:
-961. N-Repeated Element in Size 2N Array
+1161. Maximum Level Sum of a Binary Tree
 
 
 📝 Difficulty:
-⭐ Easy
+⭐ Medium
 
 
 ## 🤝 Support
