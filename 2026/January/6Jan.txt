@@ -1,4 +1,4 @@
-📌 Leetcode Daily – 06 January 2026
+📌 Leetcode Daily – 6 January 2026
 
 ❓ Problem Statement:
 1161. Maximum Level Sum of a Binary Tree
