@@ -1,0 +1,158 @@
+📌 Leetcode Daily – 07 January 2026
+
+❓ Problem Statement:
+1339. Maximum Product of Splitted Binary Tree
+
+
+📝 Difficulty:
+⭐ Medium
+
+
+## 🤝 Support
+Want to Support a POTD or solution?  
+Way1: http://buymeacoffee.com/karthikverma
+Way2: https://ko-fi.com/karthikverma
+
+
+## 🔗 Connect With Me
+- 📺 YouTube: https://www.youtube.com/channel/UCUUPCqRPzEsX-KgM8i7E8Dg
+- 📸 Instagram: https://www.instagram.com/campusprepp/
+- 🔗 Campus Prepp Website: https://campusprepp.myinstamojo.com/
+
+
+⭐ **Star this repo if it helps you!**
+
+
+🧠 Solution:
+=========================Java Solution====================================
+class Solution {
+  public int maxProduct(TreeNode root) {
+    final int MOD = 1_000_000_007;
+    long ans = 0;
+    List<Integer> allSums = new ArrayList<>();
+    final long totalSum = treeSum(root, allSums);
+
+    for (final long sum : allSums)
+      ans = Math.max(ans, sum * (totalSum - sum));
+
+    return (int) (ans % MOD);
+  }
+
+  private int treeSum(TreeNode root, List<Integer> allSums) {
+    if (root == null)
+      return 0;
+
+    final int leftSum = treeSum(root.left, allSums);
+    final int rightSum = treeSum(root.right, allSums);
+    final int sum = root.val + leftSum + rightSum;
+    allSums.add(sum);
+    return sum;
+  }
+}
+
+
+===========================Python Solution=================================
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+
+class Solution:
+    def maxProduct(self, root):
+        MOD = 10**9 + 7
+        all_sums = []
+
+        def treeSum(node):
+            if not node:
+                return 0
+
+            left_sum = treeSum(node.left)
+            right_sum = treeSum(node.right)
+            curr_sum = node.val + left_sum + right_sum
+            all_sums.append(curr_sum)
+            return curr_sum
+
+        total_sum = treeSum(root)
+        ans = 0
+
+        for s in all_sums:
+            ans = max(ans, s * (total_sum - s))
+
+        return ans % MOD
+
+
+===========================C++ Solution====================================
+class Solution {
+ public:
+  int maxProduct(TreeNode* root) {
+    constexpr int kMod = 1'000'000'007;
+    long ans = 0;
+    vector<int> allSums;
+    const long totalSum = treeSum(root, allSums);
+
+    for (const long sum : allSums)
+      ans = max(ans, sum * (totalSum - sum));
+
+    return ans % kMod;
+  }
+
+ private:
+  int treeSum(TreeNode* root, vector<int>& allSums) {
+    if (root == nullptr)
+      return 0;
+
+    const int leftSum = treeSum(root->left, allSums);
+    const int rightSum = treeSum(root->right, allSums);
+    const int sum = root->val + leftSum + rightSum;
+    allSums.push_back(sum);
+    return sum;
+  }
+};
+
+
+=========================JavaScript Solution==============================
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val, left, right) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.left = (left===undefined ? null : left)
+ *     this.right = (right===undefined ? null : right)
+ * }
+ */
+/**
+ * @param {TreeNode} root
+ * @return {number}
+ */
+var maxProduct = function(root) {
+    const MOD = 1_000_000_007;
+    const allSums = [];
+
+    const treeSum = (node) => {
+        if (node === null) return 0;
+
+        const leftSum = treeSum(node.left);
+        const rightSum = treeSum(node.right);
+        const sum = node.val + leftSum + rightSum;
+        allSums.push(sum);
+        return sum;
+    };
+
+    const totalSum = treeSum(root);
+    let ans = 0;
+
+    for (const s of allSums) {
+        ans = Math.max(ans, s * (totalSum - s));
+    }
+
+    return ans % MOD;
+};
+
+
+
+Company Asked: 
+ByteDance
+Two Sigma
+Amazon
+Microsoft
