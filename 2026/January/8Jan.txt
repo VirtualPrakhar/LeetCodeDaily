@@ -1,0 +1,117 @@
+📌 Leetcode Daily – 08 January 2026
+
+❓ Problem Statement:
+1458. Max Dot Product of Two Subsequences
+
+
+📝 Difficulty:
+⭐ Hard
+
+
+## 🤝 Support
+Want to Support a POTD or solution?  
+Way1: http://buymeacoffee.com/karthikverma
+Way2: https://ko-fi.com/karthikverma
+
+
+## 🔗 Connect With Me
+- 📺 YouTube: https://www.youtube.com/channel/UCUUPCqRPzEsX-KgM8i7E8Dg
+- 📸 Instagram: https://www.instagram.com/campusprepp/
+- 🔗 Campus Prepp Website: https://campusprepp.myinstamojo.com/
+
+
+⭐ **Star this repo if it helps you!**
+
+
+🧠 Solution:
+=========================Java Solution====================================
+class Solution {
+  public int maxDotProduct(int[] nums1, int[] nums2) {
+    final int m = nums1.length;
+    final int n = nums2.length;
+    // dp[i][j] := the maximum dot product of the two subsequences nums[0..i)
+    // and nums2[0..j)
+    int[][] dp = new int[m + 1][n + 1];
+    Arrays.stream(dp).forEach(A -> Arrays.fill(A, Integer.MIN_VALUE));
+
+    for (int i = 0; i < m; ++i)
+      for (int j = 0; j < n; ++j)
+        dp[i + 1][j + 1] = Math.max(Math.max(dp[i][j + 1], dp[i + 1][j]),
+                                    Math.max(0, dp[i][j]) + nums1[i] * nums2[j]);
+
+    return dp[m][n];
+  }
+}
+
+
+===========================Python Solution=================================
+class Solution:
+  def maxDotProduct(self, A: list[int], B: list[int]) -> int:
+    m = len(A)
+    n = len(B)
+    # dp[i][j] := the maximum dot product of the two subsequences nums[0..i)
+    # and nums2[0..j)
+    dp = [[-math.inf] * (n + 1) for _ in range(m + 1)]
+
+    for i in range(m):
+      for j in range(n):
+        dp[i + 1][j + 1] = max(dp[i][j + 1], dp[i + 1][j],
+                               max(0, dp[i][j]) + A[i] * B[j])
+
+    return dp[m][n]
+
+
+===========================C++ Solution====================================
+class Solution {
+ public:
+  int maxDotProduct(vector<int>& nums1, vector<int>& nums2) {
+    const int m = nums1.size();
+    const int n = nums2.size();
+    // dp[i][j] := the maximum dot product of the two subsequences nums[0..i)
+    // and nums2[0..j)
+    vector<vector<int>> dp(m + 1, vector<int>(n + 1, INT_MIN));
+
+    for (int i = 0; i < m; ++i)
+      for (int j = 0; j < n; ++j)
+        dp[i + 1][j + 1] = max({dp[i][j + 1], dp[i + 1][j],
+                                max(0, dp[i][j]) + nums1[i] * nums2[j]});
+
+    return dp[m][n];
+  }
+};
+
+
+=========================JavaScript Solution==============================
+/**
+ * @param {number[]} A
+ * @param {number[]} B
+ * @return {number}
+ */
+var maxDotProduct = function(A, B) {
+    const m = A.length;
+    const n = B.length;
+
+    // dp[i][j] = maximum dot product of subsequences
+    // A[0..i) and B[0..j)
+    const dp = Array.from({ length: m + 1 }, () =>
+        Array(n + 1).fill(-Infinity)
+    );
+
+    for (let i = 0; i < m; i++) {
+        for (let j = 0; j < n; j++) {
+            dp[i + 1][j + 1] = Math.max(
+                dp[i][j + 1],
+                dp[i + 1][j],
+                Math.max(0, dp[i][j]) + A[i] * B[j]
+            );
+        }
+    }
+
+    return dp[m][n];
+};
+
+
+Company Asked: 
+Microsoft
+Amazon
+Bloomberg
