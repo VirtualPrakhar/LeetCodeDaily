@@ -1,0 +1,143 @@
+📌 Leetcode Daily – 09 January 2026
+
+❓ Problem Statement:
+865. Smallest Subtree with all the Deepest Nodes
+
+
+📝 Difficulty:
+⭐ Medium
+
+
+## 🤝 Support
+Want to Support a POTD or solution?  
+Way1: http://buymeacoffee.com/karthikverma
+Way2: https://ko-fi.com/karthikverma
+
+
+## 🔗 Connect With Me
+- 📺 YouTube: https://www.youtube.com/channel/UCUUPCqRPzEsX-KgM8i7E8Dg
+- 🔗 Campus Prepp Website: https://campusprepp.myinstamojo.com/
+
+
+⭐ **Star this repo if it helps you!**
+
+
+🧠 Solution:
+=========================Java Solution====================================
+class Solution {
+  public TreeNode subtreeWithAllDeepest(TreeNode root) {
+    return dfs(root).lca;
+  }
+
+  private record T(TreeNode lca, int depth) {}
+
+  private T dfs(TreeNode root) {
+    if (root == null)
+      return new T(null, 0);
+
+    T left = dfs(root.left);
+    T right = dfs(root.right);
+    if (left.depth > right.depth)
+      return new T(left.lca, left.depth + 1);
+    if (left.depth < right.depth)
+      return new T(right.lca, right.depth + 1);
+    return new T(root, left.depth + 1);
+  }
+}
+
+
+===========================Python Solution=================================
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+
+class Solution:
+    def subtreeWithAllDeepest(self, root):
+        def dfs(node):
+            if not node:
+                return (None, 0)  # (lca, depth)
+
+            left_lca, left_depth = dfs(node.left)
+            right_lca, right_depth = dfs(node.right)
+
+            if left_depth > right_depth:
+                return (left_lca, left_depth + 1)
+            if left_depth < right_depth:
+                return (right_lca, right_depth + 1)
+            return (node, left_depth + 1)
+
+        return dfs(root)[0]
+
+
+===========================C++ Solution====================================
+struct T {
+  TreeNode* lca;
+  int depth;
+};
+
+class Solution {
+ public:
+  TreeNode* subtreeWithAllDeepest(TreeNode* root) {
+    return dfs(root).lca;
+  }
+
+ private:
+  T dfs(TreeNode* root) {
+    if (root == nullptr)
+      return {nullptr, 0};
+
+    const T left = dfs(root->left);
+    const T right = dfs(root->right);
+    if (left.depth > right.depth)
+      return {left.lca, left.depth + 1};
+    if (left.depth < right.depth)
+      return {right.lca, right.depth + 1};
+    return {root, left.depth + 1};
+  }
+};
+
+
+=========================JavaScript Solution==============================
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val, left, right) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.left = (left===undefined ? null : left)
+ *     this.right = (right===undefined ? null : right)
+ * }
+ */
+
+/**
+ * @param {TreeNode} root
+ * @return {TreeNode}
+ */
+var subtreeWithAllDeepest = function(root) {
+    const dfs = (node) => {
+        if (node === null) {
+            return { lca: null, depth: 0 };
+        }
+
+        const left = dfs(node.left);
+        const right = dfs(node.right);
+
+        if (left.depth > right.depth) {
+            return { lca: left.lca, depth: left.depth + 1 };
+        }
+        if (left.depth < right.depth) {
+            return { lca: right.lca, depth: right.depth + 1 };
+        }
+        return { lca: node, depth: left.depth + 1 };
+    };
+
+    return dfs(root).lca;
+};
+
+
+Company Asked: 
+Facebook
+Amazon
+Salesforce
+Meta
