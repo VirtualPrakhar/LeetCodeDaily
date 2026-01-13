@@ -1,0 +1,169 @@
+📌 Leetcode Daily – 13 January 2026
+
+❓ Problem Statement:
+3453. Separate Squares I
+
+
+📝 Difficulty:
+⭐ Medium
+
+
+## 🤝 Support
+Want to Support a POTD or solution?  
+Way1: http://buymeacoffee.com/karthikverma
+Way2: https://ko-fi.com/karthikverma
+
+
+## 🔗 Connect With Me
+- 📺 YouTube: https://www.youtube.com/channel/UCUUPCqRPzEsX-KgM8i7E8Dg
+- 🔗 Campus Prepp Website: https://campusprepp.myinstamojo.com/
+
+
+⭐ **Star this repo if it helps you!**
+
+
+🧠 Solution:
+=========================Java Solution====================================
+class Solution {
+  public double separateSquares(int[][] squares) {
+    final double halfArea =
+        Arrays.stream(squares).mapToDouble(square -> Math.pow(square[2], 2)).sum() / 2;
+    List<int[]> events = new ArrayList<>();
+
+    for (int[] square : squares) {
+      final int y = square[1];
+      final int l = square[2];
+      events.add(new int[] {y, 1, l});     // start of square
+      events.add(new int[] {y + l, 0, l}); // end of square
+    }
+
+    events.sort(Comparator.comparingInt(event -> event[0]));
+
+    double area = 0;
+    int width = 0;
+    int prevY = 0;
+
+    for (int[] event : events) {
+      final int y = event[0];
+      final int l = event[2];
+      final double areaGain = width * (long) (y - prevY);
+      if (area + areaGain >= halfArea)
+        return prevY + (halfArea - area) / width;
+      area += areaGain;
+      width += (event[1] == 1) ? l : -l;
+      prevY = y;
+    }
+
+    throw new IllegalArgumentException();
+  }
+}
+
+
+===========================Python Solution=================================
+class Solution:
+  def separateSquares(self, squares: list[list[int]]) -> float:
+    halfArea = sum((l**2 for _, _, l in squares)) / 2
+    events = sorted([(y, True, l) for _, y, l in squares] +
+                    [(y + l, False, l) for _, y, l in squares])
+    area = 0
+    width = 0
+    prevY = 0
+
+    for y, isStart, l in events:
+      areaGain = width * (y - prevY)
+      if area + areaGain >= halfArea:
+        return prevY + (halfArea - area) / width
+      area += areaGain
+      width += l if isStart else -l
+      prevY = y
+
+
+===========================C++ Solution====================================
+class Solution {
+ public:
+  double separateSquares(vector<vector<int>>& squares) {
+    const double halfArea = accumulate(squares.begin(), squares.end(), 0.0,
+                                       [](double sum, vector<int>& square) {
+      return sum + static_cast<long>(square[2]) * square[2];
+    }) / 2;
+    vector<tuple<int, bool, int>> events;
+
+    for (const vector<int>& square : squares) {
+      const int y = square[1];
+      const int l = square[2];
+      events.push_back({y, true, l});       // start of square
+      events.push_back({y + l, false, l});  // end of square
+    }
+
+    ranges::sort(events);
+
+    double area = 0;
+    int width = 0;
+    int prevY = 0;
+
+    for (const auto& [y, isStart, l] : events) {
+      double areaGain = width * static_cast<long>(y - prevY);
+      if (area + areaGain >= halfArea)
+        return prevY + (halfArea - area) / width;
+      area += areaGain;
+      width += isStart ? l : -l;
+      prevY = y;
+    }
+
+    throw;
+  }
+};
+
+
+=========================JavaScript Solution==============================
+class Solution {
+    /**
+     * @param {number[][]} squares
+     * @return {number}
+     */
+    separateSquares(squares) {
+        // Compute half of total area
+        let totalArea = 0;
+        for (const sq of squares) {
+            totalArea += sq[2] * sq[2];
+        }
+        const halfArea = totalArea / 2;
+
+        // Events: [y, isStart, length]
+        const events = [];
+
+        for (const sq of squares) {
+            const y = sq[1];
+            const l = sq[2];
+            events.push([y, true, l]);       // start
+            events.push([y + l, false, l]);  // end
+        }
+
+        // Sort events by y
+        events.sort((a, b) => a[0] - b[0]);
+
+        let area = 0;
+        let width = 0;
+        let prevY = events[0][0];
+
+        for (const [y, isStart, l] of events) {
+            const areaGain = width * (y - prevY);
+
+            if (area + areaGain >= halfArea) {
+                // Exact Y where half area is reached
+                return prevY + (halfArea - area) / width;
+            }
+
+            area += areaGain;
+            width += isStart ? l : -l;
+            prevY = y;
+        }
+
+        // Should never reach here as per problem guarantees
+        return -1;
+    }
+}
+
+
+Company Asked: 
+will update soon

@@ -1,0 +1,369 @@
+📌 Leetcode Daily – 14 January 2026
+
+❓ Problem Statement:
+3454. Separate Squares II
+
+
+📝 Difficulty:
+⭐ Hard
+
+
+## 🤝 Support
+Want to Support a POTD or solution?  
+Way1: http://buymeacoffee.com/karthikverma
+Way2: https://ko-fi.com/karthikverma
+
+
+## 🔗 Connect With Me
+- 📺 YouTube: https://www.youtube.com/channel/UCUUPCqRPzEsX-KgM8i7E8Dg
+- 🔗 Campus Prepp Website: https://campusprepp.myinstamojo.com/
+
+
+⭐ **Star this repo if it helps you!**
+
+
+🧠 Solution:
+=========================Java Solution====================================
+import java.util.*;
+
+class SegmentTree {
+    int n;
+    int[] xs;
+    int[] coveredCount;
+    int[] coveredWidth;
+
+    SegmentTree(int[] xs) {
+        this.xs = xs;
+        this.n = xs.length - 1;
+        coveredCount = new int[4 * n];
+        coveredWidth = new int[4 * n];
+    }
+
+    void add(int l, int r, int val) {
+        add(0, 0, n - 1, l, r, val);
+    }
+
+    int getCoveredWidth() {
+        return coveredWidth[0];
+    }
+
+    private void add(int idx, int lo, int hi, int l, int r, int val) {
+        if (r <= xs[lo] || xs[hi + 1] <= l) return;
+
+        if (l <= xs[lo] && xs[hi + 1] <= r) {
+            coveredCount[idx] += val;
+        } else {
+            int mid = (lo + hi) / 2;
+            add(2 * idx + 1, lo, mid, l, r, val);
+            add(2 * idx + 2, mid + 1, hi, l, r, val);
+        }
+
+        if (coveredCount[idx] > 0) {
+            coveredWidth[idx] = xs[hi + 1] - xs[lo];
+        } else if (lo == hi) {
+            coveredWidth[idx] = 0;
+        } else {
+            coveredWidth[idx] = coveredWidth[2 * idx + 1] + coveredWidth[2 * idx + 2];
+        }
+    }
+}
+
+class Solution {
+    public double separateSquares(int[][] squares) {
+        List<int[]> events = new ArrayList<>();
+        TreeSet<Integer> xs = new TreeSet<>();
+
+        for (int[] s : squares) {
+            int x = s[0], y = s[1], l = s[2];
+            events.add(new int[]{y, 1, x, x + l});
+            events.add(new int[]{y + l, -1, x, x + l});
+            xs.add(x);
+            xs.add(x + l);
+        }
+
+        events.sort(Comparator.comparingInt(a -> a[0]));
+
+        int[] xArr = xs.stream().mapToInt(Integer::intValue).toArray();
+        SegmentTree tree = new SegmentTree(xArr);
+
+        double halfArea = getArea(events, xArr) / 2.0;
+        long area = 0;
+        int prevY = 0;
+
+        for (int[] e : events) {
+            int y = e[0], delta = e[1], xl = e[2], xr = e[3];
+            long gain = (long) tree.getCoveredWidth() * (y - prevY);
+            if (area + gain >= halfArea)
+                return prevY + (halfArea - area) / tree.getCoveredWidth();
+            area += gain;
+            tree.add(xl, xr, delta);
+            prevY = y;
+        }
+        throw new RuntimeException();
+    }
+
+    private long getArea(List<int[]> events, int[] xs) {
+        SegmentTree tree = new SegmentTree(xs);
+        long area = 0;
+        int prevY = 0;
+        for (int[] e : events) {
+            int y = e[0], delta = e[1], xl = e[2], xr = e[3];
+            area += (long) tree.getCoveredWidth() * (y - prevY);
+            tree.add(xl, xr, delta);
+            prevY = y;
+        }
+        return area;
+    }
+}
+
+
+===========================Python Solution=================================
+class SegmentTree:
+    def __init__(self, xs):
+        self.xs = xs
+        self.n = len(xs) - 1
+        self.count = [0] * (4 * self.n)
+        self.width = [0] * (4 * self.n)
+
+    def add(self, l, r, val):
+        self._add(0, 0, self.n - 1, l, r, val)
+
+    def _add(self, idx, lo, hi, l, r, val):
+        if r <= self.xs[lo] or self.xs[hi + 1] <= l:
+            return
+        if l <= self.xs[lo] and self.xs[hi + 1] <= r:
+            self.count[idx] += val
+        else:
+            mid = (lo + hi) // 2
+            self._add(2 * idx + 1, lo, mid, l, r, val)
+            self._add(2 * idx + 2, mid + 1, hi, l, r, val)
+
+        if self.count[idx] > 0:
+            self.width[idx] = self.xs[hi + 1] - self.xs[lo]
+        elif lo == hi:
+            self.width[idx] = 0
+        else:
+            self.width[idx] = self.width[2 * idx + 1] + self.width[2 * idx + 2]
+
+    def covered_width(self):
+        return self.width[0]
+
+
+class Solution:
+    def separateSquares(self, squares):
+        events = []
+        xs = set()
+
+        for x, y, l in squares:
+            events.append((y, 1, x, x + l))
+            events.append((y + l, -1, x, x + l))
+            xs.add(x)
+            xs.add(x + l)
+
+        events.sort()
+        xs = sorted(xs)
+
+        half_area = self.total_area(events, xs) / 2
+        tree = SegmentTree(xs)
+
+        area = 0
+        prev_y = 0
+
+        for y, d, xl, xr in events:
+            gain = tree.covered_width() * (y - prev_y)
+            if area + gain >= half_area:
+                return prev_y + (half_area - area) / tree.covered_width()
+            area += gain
+            tree.add(xl, xr, d)
+            prev_y = y
+
+    def total_area(self, events, xs):
+        tree = SegmentTree(xs)
+        area = 0
+        prev_y = 0
+        for y, d, xl, xr in events:
+            area += tree.covered_width() * (y - prev_y)
+            tree.add(xl, xr, d)
+            prev_y = y
+        return area
+
+
+===========================C++ Solution====================================
+class SegmentTree {
+ public:
+  explicit SegmentTree(const vector<int>& xs)
+      : xs(xs), n(xs.size() - 1), coveredCount(4 * n), coveredWidth(4 * n) {}
+
+  // Adds val to the range [i, j].
+  void add(int i, int j, int val) {
+    add(0, 0, n - 1, i, j, val);
+  }
+
+  // Returns the covered width of xs[0..n - 1].
+  int getCoveredWidth() const {
+    return coveredWidth[0];
+  }
+
+ private:
+  const int n;  // the number of segments (|xs| - 1)
+  vector<int> xs;
+  vector<int> coveredCount;
+  vector<int> coveredWidth;
+
+  void add(int treeIndex, int lo, int hi, int i, int j, int val) {
+    if (j <= xs[lo] || xs[hi + 1] <= i)
+      return;
+    if (i <= xs[lo] && xs[hi + 1] <= j) {
+      coveredCount[treeIndex] += val;
+    } else {
+      const int mid = (lo + hi) / 2;
+      add(2 * treeIndex + 1, lo, mid, i, j, val);
+      add(2 * treeIndex + 2, mid + 1, hi, i, j, val);
+    }
+    if (coveredCount[treeIndex] > 0) {
+      coveredWidth[treeIndex] = xs[hi + 1] - xs[lo];
+    } else if (lo == hi) {
+      coveredWidth[treeIndex] = 0;
+    } else {
+      coveredWidth[treeIndex] =
+          coveredWidth[2 * treeIndex + 1] + coveredWidth[2 * treeIndex + 2];
+    }
+  }
+};
+
+class Solution {
+ public:
+  double separateSquares(vector<vector<int>>& squares) {
+    vector<tuple<int, int, int, int>> events;  // (y, delta, xl, xr)
+    set<int> xs;
+
+    for (const vector<int>& square : squares) {
+      const int x = square[0];
+      const int y = square[1];
+      const int l = square[2];
+      events.emplace_back(y, 1, x, x + l);
+      events.emplace_back(y + l, -1, x, x + l);
+      xs.insert(x);
+      xs.insert(x + l);
+    }
+
+    ranges::sort(events);
+
+    const double halfArea = getArea(events, xs) / 2.0;
+    long area = 0;
+    int prevY = 0;
+    SegmentTree tree({xs.begin(), xs.end()});
+
+    for (const auto& [y, delta, xl, xr] : events) {
+      const int coveredWidth = tree.getCoveredWidth();
+      const long areaGain = coveredWidth * static_cast<long>(y - prevY);
+      if (area + areaGain >= halfArea)
+        return prevY + (halfArea - area) / coveredWidth;
+      area += areaGain;
+      tree.add(xl, xr, delta);
+      prevY = y;
+    }
+
+    throw;
+  }
+
+ private:
+  // Returns the total area of the rectangles.
+  long getArea(const vector<tuple<int, int, int, int>>& events,
+               const set<int>& xs) {
+    long totalArea = 0;
+    int prevY = 0;
+    SegmentTree tree({xs.begin(), xs.end()});
+    for (const auto& [y, delta, xl, xr] : events) {
+      totalArea += tree.getCoveredWidth() * static_cast<long>(y - prevY);
+      tree.add(xl, xr, delta);
+      prevY = y;
+    }
+    return totalArea;
+  }
+};
+
+
+=========================JavaScript Solution==============================
+class SegmentTree {
+    constructor(xs) {
+        this.xs = xs;
+        this.n = xs.length - 1;
+        this.count = Array(4 * this.n).fill(0);
+        this.width = Array(4 * this.n).fill(0);
+    }
+
+    add(l, r, val) {
+        this._add(0, 0, this.n - 1, l, r, val);
+    }
+
+    _add(idx, lo, hi, l, r, val) {
+        if (r <= this.xs[lo] || this.xs[hi + 1] <= l) return;
+
+        if (l <= this.xs[lo] && this.xs[hi + 1] <= r) {
+            this.count[idx] += val;
+        } else {
+            const mid = Math.floor((lo + hi) / 2);
+            this._add(2 * idx + 1, lo, mid, l, r, val);
+            this._add(2 * idx + 2, mid + 1, hi, l, r, val);
+        }
+
+        if (this.count[idx] > 0) {
+            this.width[idx] = this.xs[hi + 1] - this.xs[lo];
+        } else if (lo === hi) {
+            this.width[idx] = 0;
+        } else {
+            this.width[idx] = this.width[2 * idx + 1] + this.width[2 * idx + 2];
+        }
+    }
+
+    coveredWidth() {
+        return this.width[0];
+    }
+}
+
+class Solution {
+    separateSquares(squares) {
+        const events = [];
+        const xs = new Set();
+
+        for (const [x, y, l] of squares) {
+            events.push([y, 1, x, x + l]);
+            events.push([y + l, -1, x, x + l]);
+            xs.add(x);
+            xs.add(x + l);
+        }
+
+        events.sort((a, b) => a[0] - b[0]);
+        const xArr = [...xs].sort((a, b) => a - b);
+
+        const halfArea = this.totalArea(events, xArr) / 2;
+        const tree = new SegmentTree(xArr);
+
+        let area = 0, prevY = 0;
+
+        for (const [y, d, xl, xr] of events) {
+            const gain = tree.coveredWidth() * (y - prevY);
+            if (area + gain >= halfArea)
+                return prevY + (halfArea - area) / tree.coveredWidth();
+            area += gain;
+            tree.add(xl, xr, d);
+            prevY = y;
+        }
+    }
+
+    totalArea(events, xs) {
+        const tree = new SegmentTree(xs);
+        let area = 0, prevY = 0;
+        for (const [y, d, xl, xr] of events) {
+            area += tree.coveredWidth() * (y - prevY);
+            tree.add(xl, xr, d);
+            prevY = y;
+        }
+        return area;
+    }
+}
+
+
+Company Asked: 
+will update soon
