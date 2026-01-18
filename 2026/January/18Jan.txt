@@ -1,0 +1,280 @@
+📌 Leetcode Daily – 18 January 2026
+
+❓ Problem Statement:
+1895. Largest Magic Square
+
+
+📝 Difficulty:
+⭐ Medium
+
+
+## 🤝 Support
+Want to Support a POTD or solution?  
+Way1: http://buymeacoffee.com/karthikverma
+Way2: https://ko-fi.com/karthikverma
+
+
+## 🔗 Connect With Me
+- 📺 YouTube: https://www.youtube.com/channel/UCUUPCqRPzEsX-KgM8i7E8Dg
+- 🔗 Campus Prepp Website: https://campusprepp.myinstamojo.com/
+
+
+⭐ **Star this repo if it helps you!**
+
+
+🧠 Solution:
+=========================Java Solution====================================
+class Solution {
+  public int largestMagicSquare(int[][] grid) {
+    final int m = grid.length;
+    final int n = grid[0].length;
+    // prefixRow[i][j] := the sum of the first j numbers in the i-th row
+    int[][] prefixRow = new int[m][n + 1];
+    // prefixCol[i][j] := the sum of the first j numbers in the i-th column
+    int[][] prefixCol = new int[n][m + 1];
+
+    for (int i = 0; i < m; ++i)
+      for (int j = 0; j < n; ++j) {
+        prefixRow[i][j + 1] = prefixRow[i][j] + grid[i][j];
+        prefixCol[j][i + 1] = prefixCol[j][i] + grid[i][j];
+      }
+
+    for (int k = Math.min(m, n); k >= 2; --k)
+      if (containsMagicSquare(grid, prefixRow, prefixCol, k))
+        return k;
+
+    return 1;
+  }
+
+  // Returns true if the grid contains any magic square of size k x k.
+  private boolean containsMagicSquare(int[][] grid, int[][] prefixRow, int[][] prefixCol, int k) {
+    for (int i = 0; i + k - 1 < grid.length; ++i)
+      for (int j = 0; j + k - 1 < grid[0].length; ++j)
+        if (isMagicSquare(grid, prefixRow, prefixCol, i, j, k))
+          return true;
+    return false;
+  }
+
+  // Returns true if grid[i..i + k)[j..j + k) is a magic square.
+  private boolean isMagicSquare(int[][] grid, int[][] prefixRow, int[][] prefixCol, int i, int j,
+                                int k) {
+    int diag = 0;
+    int antiDiag = 0;
+    for (int d = 0; d < k; ++d) {
+      diag += grid[i + d][j + d];
+      antiDiag += grid[i + d][j + k - 1 - d];
+    }
+    if (diag != antiDiag)
+      return false;
+    for (int d = 0; d < k; ++d) {
+      if (getSum(prefixRow, i + d, j, j + k - 1) != diag)
+        return false;
+      if (getSum(prefixCol, j + d, i, i + k - 1) != diag)
+        return false;
+    }
+    return true;
+  }
+
+  // Returns sum(grid[i][l..r]) or sum(grid[l..r][i]).
+  private int getSum(int[][] prefix, int i, int l, int r) {
+    return prefix[i][r + 1] - prefix[i][l];
+  }
+}
+
+
+===========================Python Solution=================================
+class Solution:
+  def largestMagicSquare(self, grid: list[list[int]]) -> int:
+    m = len(grid)
+    n = len(grid[0])
+    # prefixRow[i][j] := the sum of the first j numbers in the i-th row
+    prefixRow = [[0] * (n + 1) for _ in range(m)]
+    # prefixCol[i][j] := the sum of the first j numbers in the i-th column
+    prefixCol = [[0] * (m + 1) for _ in range(n)]
+
+    for i in range(m):
+      for j in range(n):
+        prefixRow[i][j + 1] = prefixRow[i][j] + grid[i][j]
+        prefixCol[j][i + 1] = prefixCol[j][i] + grid[i][j]
+
+    def isMagicSquare(i: int, j: int, k: int) -> bool:
+      """Returns True if grid[i..i + k)[j..j + k) is a magic square."""
+      diag, antiDiag = 0, 0
+      for d in range(k):
+        diag += grid[i + d][j + d]
+        antiDiag += grid[i + d][j + k - 1 - d]
+      if diag != antiDiag:
+        return False
+      for d in range(k):
+        if self._getSum(prefixRow, i + d, j, j + k - 1) != diag:
+          return False
+        if self._getSum(prefixCol, j + d, i, i + k - 1) != diag:
+          return False
+      return True
+
+    def containsMagicSquare(k: int) -> bool:
+      """Returns True if the grid contains any magic square of size k x k."""
+      for i in range(m - k + 1):
+        for j in range(n - k + 1):
+          if isMagicSquare(i, j, k):
+            return True
+      return False
+
+    for k in range(min(m, n), 1, -1):
+      if containsMagicSquare(k):
+        return k
+
+    return 1
+
+  def _getSum(self, prefix: list[list[int]], i: int, l: int, r: int) -> int:
+    """Returns sum(grid[i][l..r]) or sum(grid[l..r][i])."""
+    return prefix[i][r + 1] - prefix[i][l]
+
+
+===========================C++ Solution====================================
+class Solution {
+ public:
+  int largestMagicSquare(vector<vector<int>>& grid) {
+    const int m = grid.size();
+    const int n = grid[0].size();
+    // prefixRow[i][j] := the sum of the first j numbers in the i-th row
+    vector<vector<int>> prefixRow(m, vector<int>(n + 1));
+    // prefixCol[i][j] := the sum of the first j numbers in the i-th column
+    vector<vector<int>> prefixCol(n, vector<int>(m + 1));
+
+    for (int i = 0; i < m; ++i)
+      for (int j = 0; j < n; ++j) {
+        prefixRow[i][j + 1] = prefixRow[i][j] + grid[i][j];
+        prefixCol[j][i + 1] = prefixCol[j][i] + grid[i][j];
+      }
+
+    for (int k = min(m, n); k >= 2; --k)
+      if (containsMagicSquare(grid, prefixRow, prefixCol, k))
+        return k;
+
+    return 1;
+  }
+
+ private:
+  // Returns true if the grid contains any magic square of size k x k.
+  bool containsMagicSquare(const vector<vector<int>>& grid,
+                           const vector<vector<int>>& prefixRow,
+                           const vector<vector<int>>& prefixCol, int k) {
+    for (int i = 0; i + k - 1 < grid.size(); ++i)
+      for (int j = 0; j + k - 1 < grid[0].size(); ++j)
+        if (isMagicSquare(grid, prefixRow, prefixCol, i, j, k))
+          return true;
+    return false;
+  }
+
+  // Returns true if grid[i..i + k)[j..j + k) is a magic square.
+  bool isMagicSquare(const vector<vector<int>>& grid,
+                     const vector<vector<int>>& prefixRow,
+                     const vector<vector<int>>& prefixCol, int i, int j,
+                     int k) {
+    int diag = 0;
+    int antiDiag = 0;
+    for (int d = 0; d < k; ++d) {
+      diag += grid[i + d][j + d];
+      antiDiag += grid[i + d][j + k - 1 - d];
+    }
+    if (diag != antiDiag)
+      return false;
+    for (int d = 0; d < k; ++d) {
+      if (getSum(prefixRow, i + d, j, j + k - 1) != diag)
+        return false;
+      if (getSum(prefixCol, j + d, i, i + k - 1) != diag)
+        return false;
+    }
+    return true;
+  }
+
+  // Returns sum(grid[i][l..r]) or sum(grid[l..r][i]).
+  int getSum(const vector<vector<int>>& prefix, int i, int l, int r) {
+    return prefix[i][r + 1] - prefix[i][l];
+  }
+};
+
+
+=========================JavaScript Solution==============================
+class Solution {
+    /**
+     * @param {number[][]} grid
+     * @return {number}
+     */
+    largestMagicSquare(grid) {
+        const m = grid.length;
+        const n = grid[0].length;
+
+        // prefixRow[i][j] = sum of grid[i][0..j-1]
+        const prefixRow = Array.from({ length: m }, () => Array(n + 1).fill(0));
+        // prefixCol[j][i] = sum of grid[0..i-1][j]
+        const prefixCol = Array.from({ length: n }, () => Array(m + 1).fill(0));
+
+        for (let i = 0; i < m; i++) {
+            for (let j = 0; j < n; j++) {
+                prefixRow[i][j + 1] = prefixRow[i][j] + grid[i][j];
+                prefixCol[j][i + 1] = prefixCol[j][i] + grid[i][j];
+            }
+        }
+
+        for (let k = Math.min(m, n); k >= 2; k--) {
+            if (this.containsMagicSquare(grid, prefixRow, prefixCol, k))
+                return k;
+        }
+
+        return 1;
+    }
+
+    /**
+     * Check if any k x k magic square exists
+     */
+    containsMagicSquare(grid, prefixRow, prefixCol, k) {
+        const m = grid.length;
+        const n = grid[0].length;
+
+        for (let i = 0; i + k - 1 < m; i++) {
+            for (let j = 0; j + k - 1 < n; j++) {
+                if (this.isMagicSquare(grid, prefixRow, prefixCol, i, j, k))
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check if grid[i..i+k-1][j..j+k-1] is magic
+     */
+    isMagicSquare(grid, prefixRow, prefixCol, i, j, k) {
+        let diag = 0;
+        let antiDiag = 0;
+
+        for (let d = 0; d < k; d++) {
+            diag += grid[i + d][j + d];
+            antiDiag += grid[i + d][j + k - 1 - d];
+        }
+
+        if (diag !== antiDiag)
+            return false;
+
+        for (let d = 0; d < k; d++) {
+            if (this.getSum(prefixRow, i + d, j, j + k - 1) !== diag)
+                return false;
+            if (this.getSum(prefixCol, j + d, i, i + k - 1) !== diag)
+                return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * prefix sum helper
+     */
+    getSum(prefix, i, l, r) {
+        return prefix[i][r + 1] - prefix[i][l];
+    }
+}
+
+
+Company Asked: 
+Wayfair
