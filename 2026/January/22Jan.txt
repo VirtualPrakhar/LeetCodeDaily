@@ -1,0 +1,150 @@
+📌 Leetcode Daily – 22 January 2026
+
+❓ Problem Statement:
+3507. Minimum Pair Removal to Sort Array I
+
+📝 Difficulty:
+⭐ Easy
+
+## 🤝 Support
+Want to Support a POTD or solution?  
+Way1: http://buymeacoffee.com/karthikverma
+Way2: https://ko-fi.com/karthikverma
+
+## 🔗 Connect With Me
+- 📺 YouTube: https://www.youtube.com/channel/UCUUPCqRPzEsX-KgM8i7E8Dg
+- 🔗 Campus Prepp Website: https://campusprepp.myinstamojo.com/
+
+⭐ **Star this repo if it helps you!**
+
+🧠 Solution:
+=========================Java Solution====================================
+class Solution {
+  public int minimumPairRemoval(int[] nums) {
+    int ans = 0;
+    List<Integer> numsList = Arrays.stream(nums).boxed().collect(Collectors.toList());
+
+    while (hasInversion(numsList)) {
+      List<Integer> pairSums = new ArrayList<>();
+      for (int i = 0; i < numsList.size() - 1; ++i)
+        pairSums.add(numsList.get(i) + numsList.get(i + 1));
+      int minPairSum = Integer.MAX_VALUE;
+      int minPairIndex = -1;
+      for (int i = 0; i < pairSums.size(); ++i)
+        if (pairSums.get(i) < minPairSum) {
+          minPairSum = pairSums.get(i);
+          minPairIndex = i;
+        }
+      numsList.set(minPairIndex, minPairSum);
+      numsList.remove(minPairIndex + 1);
+      ++ans;
+    }
+
+    return ans;
+  }
+
+  private boolean hasInversion(List<Integer> nums) {
+    for (int i = 0; i < nums.size() - 1; ++i)
+      if (nums.get(i) > nums.get(i + 1))
+        return true;
+    return false;
+  }
+}
+
+
+===========================Python Solution=================================
+class Solution:
+  def minimumPairRemoval(self, nums: list[int]) -> int:
+    ans = 0
+
+    while any(x > y for x, y in itertools.pairwise(nums)):
+      pairSums = [x + y for x, y in itertools.pairwise(nums)]
+      minPairSum = min(pairSums)
+      minPairIndex = pairSums.index(minPairSum)
+      nums[minPairIndex] = minPairSum
+      nums.pop(minPairIndex + 1)
+      ans += 1
+
+    return ans
+
+
+===========================C++ Solution====================================
+#include <ranges>
+
+class Solution {
+ public:
+  int minimumPairRemoval(vector<int>& nums) {
+    int ans = 0;
+
+    while (hasInversion(nums)) {
+      vector<int> pairSums;
+      for (const auto& [a, b] : views::pairwise(nums))
+        pairSums.push_back(a + b);
+      const int minPairSum = ranges::min(pairSums);
+      const int minPairIndex =
+          ranges::find(pairSums, minPairSum) - pairSums.begin();
+      nums[minPairIndex] = minPairSum;
+      nums.erase(nums.begin() + minPairIndex + 1);
+      ++ans;
+    }
+
+    return ans;
+  }
+
+ private:
+  bool hasInversion(const vector<int>& nums) {
+    for (const auto& [a, b] : views::pairwise(nums))
+      if (a > b)
+        return true;
+    return false;
+  }
+};
+
+
+=========================JavaScript Solution==============================
+class Solution {
+    /**
+     * @param {number[]} nums
+     * @return {number}
+     */
+    minimumPairRemoval(nums) {
+        let ans = 0;
+        let numsList = [...nums]; // convert to mutable list
+
+        while (this.hasInversion(numsList)) {
+            const pairSums = [];
+
+            for (let i = 0; i < numsList.length - 1; i++) {
+                pairSums.push(numsList[i] + numsList[i + 1]);
+            }
+
+            let minPairSum = Infinity;
+            let minPairIndex = -1;
+
+            for (let i = 0; i < pairSums.length; i++) {
+                if (pairSums[i] < minPairSum) {
+                    minPairSum = pairSums[i];
+                    minPairIndex = i;
+                }
+            }
+
+            // merge the minimum-sum pair
+            numsList[minPairIndex] = minPairSum;
+            numsList.splice(minPairIndex + 1, 1);
+            ans++;
+        }
+
+        return ans;
+    }
+
+    hasInversion(nums) {
+        for (let i = 0; i < nums.length - 1; i++) {
+            if (nums[i] > nums[i + 1]) return true;
+        }
+        return false;
+    }
+}
+
+
+Company Asked: 
+will update soon
