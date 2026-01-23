@@ -1,0 +1,316 @@
+📌 Leetcode Daily – 23 January 2026
+
+❓ Problem Statement:
+3510. Minimum Pair Removal to Sort Array II
+
+📝 Difficulty:
+⭐ Hard
+
+## 🤝 Support
+Want to Support a POTD or solution?  
+Way1: http://buymeacoffee.com/karthikverma
+Way2: https://ko-fi.com/karthikverma
+
+## 🔗 Connect With Me
+- 📺 YouTube: https://www.youtube.com/channel/UCUUPCqRPzEsX-KgM8i7E8Dg
+- 🔗 Campus Prepp Website: https://campusprepp.myinstamojo.com/
+
+⭐ **Star this repo if it helps you!**
+
+🧠 Solution:
+=========================Java Solution====================================
+class Solution {
+  public int minimumPairRemoval(int[] nums) {
+    final int n = nums.length;
+    int ans = 0;
+    int inversionsCount = 0;
+    int[] nextIndices = new int[n];
+    int[] prevIndices = new int[n];
+    long[] values = Arrays.stream(nums).asLongStream().toArray();
+    TreeSet<Pair<Long, Integer>> pairSums =
+        new TreeSet<>(Comparator.comparingLong(Pair<Long, Integer>::getKey)
+                          .thenComparingInt(Pair<Long, Integer>::getValue));
+
+    for (int i = 0; i < n; ++i) {
+      nextIndices[i] = i + 1;
+      prevIndices[i] = i - 1;
+    }
+
+    for (int i = 0; i < n - 1; ++i)
+      pairSums.add(new Pair<>((long) nums[i] + nums[i + 1], i));
+
+    for (int i = 0; i < n - 1; ++i)
+      if (nums[i + 1] < nums[i])
+        ++inversionsCount;
+
+    while (inversionsCount > 0) {
+      ++ans;
+      Pair<Long, Integer> smallestPair = pairSums.pollFirst();
+      final long pairSum = smallestPair.getKey();
+      final int currIndex = smallestPair.getValue();
+      final int nextIndex = nextIndices[currIndex];
+      final int prevIndex = prevIndices[currIndex];
+      if (prevIndex >= 0) {
+        final long oldPairSum = values[prevIndex] + values[currIndex];
+        final long newPairSum = values[prevIndex] + pairSum;
+        pairSums.remove(new Pair<>(oldPairSum, prevIndex));
+        pairSums.add(new Pair<>(newPairSum, prevIndex));
+        if (values[prevIndex] > values[currIndex])
+          --inversionsCount;
+        if (values[prevIndex] > pairSum)
+          ++inversionsCount;
+      }
+
+      if (values[nextIndex] < values[currIndex])
+        --inversionsCount;
+
+      final int nextNextIndex = (nextIndex < n) ? nextIndices[nextIndex] : n;
+      if (nextNextIndex < n) {
+        final long oldPairSum = values[nextIndex] + values[nextNextIndex];
+        final long newPairSum = pairSum + values[nextNextIndex];
+        pairSums.remove(new Pair<>(oldPairSum, nextIndex));
+        pairSums.add(new Pair<>(newPairSum, currIndex));
+        if (values[nextNextIndex] < values[nextIndex])
+          --inversionsCount;
+        if (values[nextNextIndex] < pairSum)
+          ++inversionsCount;
+        prevIndices[nextNextIndex] = currIndex;
+      }
+
+      nextIndices[currIndex] = nextNextIndex;
+      values[currIndex] = pairSum;
+    }
+
+    return ans;
+  }
+}
+
+
+===========================Python Solution=================================
+from sortedcontainers import SortedList
+
+
+class Solution:
+  def minimumPairRemoval(self, nums: list[int]) -> int:
+    n = len(nums)
+    ans = 0
+    inversionsCount = sum(nums[i + 1] < nums[i] for i in range(n - 1))
+    nextIndices = [i + 1 for i in range(n)]
+    prevIndices = [i - 1 for i in range(n)]
+    pairSums = SortedList((a + b, i)
+                          for i, (a, b) in enumerate(itertools.pairwise(nums)))
+
+    while inversionsCount > 0:
+      ans += 1
+      smallestPair = pairSums.pop(0)
+      pairSum, currIndex = smallestPair
+      nextIndex = nextIndices[currIndex]
+      prevIndex = prevIndices[currIndex]
+
+      if prevIndex >= 0:
+        oldPairSum = nums[prevIndex] + nums[currIndex]
+        newPairSum = nums[prevIndex] + pairSum
+        pairSums.remove((oldPairSum, prevIndex))
+        pairSums.add((newPairSum, prevIndex))
+        if nums[prevIndex] > nums[currIndex]:
+          inversionsCount -= 1
+        if nums[prevIndex] > pairSum:
+          inversionsCount += 1
+
+      if nums[nextIndex] < nums[currIndex]:
+        inversionsCount -= 1
+
+      nextNextIndex = nextIndices[nextIndex] if nextIndex < n else n
+      if nextNextIndex < n:
+        oldPairSum = nums[nextIndex] + nums[nextNextIndex]
+        newPairSum = pairSum + nums[nextNextIndex]
+        pairSums.remove((oldPairSum, nextIndex))
+        pairSums.add((newPairSum, currIndex))
+        if nums[nextNextIndex] < nums[nextIndex]:
+          inversionsCount -= 1
+        if nums[nextNextIndex] < pairSum:
+          inversionsCount += 1
+        prevIndices[nextNextIndex] = currIndex
+
+      nextIndices[currIndex] = nextNextIndex
+      nums[currIndex] = pairSum
+
+    return ans
+
+
+===========================C++ Solution====================================
+class Solution {
+ public:
+  int minimumPairRemoval(vector<int>& nums) {
+    const int n = nums.size();
+    int ans = 0;
+    int inversionsCount = 0;
+    vector<int> nextIndices(n);
+    vector<int> prevIndices(n);
+    vector<long> values(nums.begin(), nums.end());
+
+    // Custom comparator for the set
+    auto comp = [](const pair<long, int>& a, const pair<long, int>& b) {
+      return a.first < b.first || (a.first == b.first && a.second < b.second);
+    };
+    set<pair<long, int>, decltype(comp)> pairSums(comp);
+
+    for (int i = 0; i < n; ++i) {
+      nextIndices[i] = i + 1;
+      prevIndices[i] = i - 1;
+    }
+
+    for (int i = 0; i < n - 1; ++i)
+      pairSums.insert({(long)nums[i] + nums[i + 1], i});
+
+    for (int i = 0; i < n - 1; ++i)
+      if (nums[i + 1] < nums[i])
+        ++inversionsCount;
+
+    while (inversionsCount > 0) {
+      ++ans;
+      auto smallestPair = *pairSums.begin();
+      pairSums.erase(pairSums.begin());
+
+      const long pairSum = smallestPair.first;
+      const int currIndex = smallestPair.second;
+      const int nextIndex = nextIndices[currIndex];
+      const int prevIndex = prevIndices[currIndex];
+
+      if (prevIndex >= 0) {
+        const long oldPairSum = values[prevIndex] + values[currIndex];
+        const long newPairSum = values[prevIndex] + pairSum;
+        pairSums.erase({oldPairSum, prevIndex});
+        pairSums.insert({newPairSum, prevIndex});
+        if (values[prevIndex] > values[currIndex])
+          --inversionsCount;
+        if (values[prevIndex] > pairSum)
+          ++inversionsCount;
+      }
+
+      if (values[nextIndex] < values[currIndex])
+        --inversionsCount;
+
+      const int nextNextIndex = (nextIndex < n) ? nextIndices[nextIndex] : n;
+      if (nextNextIndex < n) {
+        const long oldPairSum = values[nextIndex] + values[nextNextIndex];
+        const long newPairSum = pairSum + values[nextNextIndex];
+        pairSums.erase({oldPairSum, nextIndex});
+        pairSums.insert({newPairSum, currIndex});
+        if (values[nextNextIndex] < values[nextIndex])
+          --inversionsCount;
+        if (values[nextNextIndex] < pairSum)
+          ++inversionsCount;
+        prevIndices[nextNextIndex] = currIndex;
+      }
+
+      nextIndices[currIndex] = nextNextIndex;
+      values[currIndex] = pairSum;
+    }
+
+    return ans;
+  }
+};
+
+
+=========================JavaScript Solution==============================
+class Solution {
+  minimumPairRemoval(nums) {
+    const n = nums.length;
+    let ans = 0;
+
+    // linked list via indices
+    const next = Array(n);
+    const prev = Array(n);
+    const values = nums.map(v => BigInt(v));
+
+    for (let i = 0; i < n; i++) {
+      next[i] = i + 1 < n ? i + 1 : -1;
+      prev[i] = i - 1;
+    }
+
+    // count initial inversions
+    let inversions = 0;
+    for (let i = 0; i < n - 1; i++) {
+      if (nums[i] > nums[i + 1]) inversions++;
+    }
+
+    // multiset of pair sums (sorted)
+    // stored as [sum(BigInt), index]
+    const pairSums = [];
+
+    const addPair = (sum, idx) => {
+      pairSums.push([sum, idx]);
+    };
+
+    const removePair = (sum, idx) => {
+      for (let i = 0; i < pairSums.length; i++) {
+        if (pairSums[i][0] === sum && pairSums[i][1] === idx) {
+          pairSums.splice(i, 1);
+          return;
+        }
+      }
+    };
+
+    const pollFirst = () => {
+      pairSums.sort((a, b) => {
+        if (a[0] !== b[0]) return a[0] < b[0] ? -1 : 1;
+        return a[1] - b[1];
+      });
+      return pairSums.shift();
+    };
+
+    // initial adjacent pairs
+    for (let i = 0; i < n - 1; i++) {
+      addPair(values[i] + values[i + 1], i);
+    }
+
+    while (inversions > 0) {
+      ans++;
+
+      const [pairSum, cur] = pollFirst();
+      const nxt = next[cur];
+      const prv = prev[cur];
+
+      // update left neighbor
+      if (prv >= 0) {
+        const oldSum = values[prv] + values[cur];
+        const newSum = values[prv] + pairSum;
+
+        removePair(oldSum, prv);
+        addPair(newSum, prv);
+
+        if (values[prv] > values[cur]) inversions--;
+        if (values[prv] > pairSum) inversions++;
+      }
+
+      // remove inversion between cur and nxt
+      if (values[nxt] < values[cur]) inversions--;
+
+      const nxtNxt = nxt !== -1 ? next[nxt] : -1;
+
+      // update right neighbor
+      if (nxtNxt !== -1) {
+        const oldSum = values[nxt] + values[nxtNxt];
+        const newSum = pairSum + values[nxtNxt];
+
+        removePair(oldSum, nxt);
+        addPair(newSum, cur);
+
+        if (values[nxtNxt] < values[nxt]) inversions--;
+        if (values[nxtNxt] < pairSum) inversions++;
+
+        prev[nxtNxt] = cur;
+      }
+
+      next[cur] = nxtNxt;
+      values[cur] = pairSum;
+    }
+
+    return ans;
+  }
+}
+
+
+Company Asked: 
+will update soon
