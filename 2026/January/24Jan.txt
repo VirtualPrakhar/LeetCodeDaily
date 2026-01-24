@@ -1,0 +1,87 @@
+📌 Leetcode Daily – 24 January 2026
+
+❓ Problem Statement:
+1877. Minimize Maximum Pair Sum in Array
+
+📝 Difficulty:
+⭐ Medium
+
+## 🤝 Support
+Want to Support a POTD or solution?  
+Way1: http://buymeacoffee.com/karthikverma
+Way2: https://ko-fi.com/karthikverma
+
+## 🔗 Connect With Me
+- 📺 YouTube: https://www.youtube.com/channel/UCUUPCqRPzEsX-KgM8i7E8Dg
+- 🔗 Campus Prepp Website: https://campusprepp.myinstamojo.com/
+
+⭐ **Star this repo if it helps you!**
+
+🧠 Solution:
+=========================Java Solution====================================
+class Solution {
+  public int minPairSum(int[] nums) {
+    int ans = 0;
+
+    Arrays.sort(nums);
+
+    for (int i = 0, j = nums.length - 1; i < j;)
+      ans = Math.max(ans, nums[i++] + nums[j--]);
+
+    return ans;
+  }
+}
+
+
+===========================Python Solution=================================
+class Solution:
+  def minPairSum(self, nums: list[int]) -> int:
+    nums.sort()
+    return max(nums[i] + nums[len(nums) - 1 - i] for i in range(len(nums) // 2))
+
+
+===========================C++ Solution====================================
+class Solution {
+ public:
+  int minPairSum(vector<int>& nums) {
+    int ans = 0;
+
+    ranges::sort(nums);
+
+    for (int i = 0, j = nums.size() - 1; i < j;)
+      ans = max(ans, nums[i++] + nums[j--]);
+
+    return ans;
+  }
+};
+
+
+=========================JavaScript Solution==============================
+/**
+ * @param {number[]} nums
+ * @return {number}
+ */
+var minPairSum = function(nums) {
+    nums.sort((a, b) => a - b);
+
+    let ans = 0;
+    let i = 0, j = nums.length - 1;
+
+    while (i < j) {
+        ans = Math.max(ans, nums[i] + nums[j]);
+        i++;
+        j--;
+    }
+
+    return ans;
+};
+
+
+Company Asked: 
+Google
+Adobe
+eBay
+Amazon
+Bloomberg
+Meta
+Uber
