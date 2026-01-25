@@ -1,0 +1,84 @@
+📌 Leetcode Daily – 25 January 2026
+
+❓ Problem Statement:
+1984. Minimum Difference Between Highest and Lowest of K Scores
+
+📝 Difficulty:
+⭐ Easy
+
+## 🤝 Support
+Want to Support a POTD or solution?  
+Way1: http://buymeacoffee.com/karthikverma
+Way2: https://ko-fi.com/karthikverma
+
+## 🔗 Connect With Me
+- 📺 YouTube: https://www.youtube.com/channel/UCUUPCqRPzEsX-KgM8i7E8Dg
+- 🔗 Campus Prepp Website: https://campusprepp.myinstamojo.com/
+
+⭐ **Star this repo if it helps you!**
+
+🧠 Solution:
+=========================Java Solution====================================
+class Solution {
+  public int minimumDifference(int[] nums, int k) {
+    Arrays.sort(nums);
+
+    int ans = nums[k - 1] - nums[0];
+
+    for (int i = k; i < nums.length; ++i)
+      ans = Math.min(ans, nums[i] - nums[i - k + 1]);
+
+    return ans;
+  }
+}
+
+
+===========================Python Solution=================================
+class Solution:
+  def minimumDifference(self, nums: list[int], k: int) -> int:
+    nums.sort()
+    ans = nums[k - 1] - nums[0]
+
+    for i in range(k, len(nums)):
+      ans = min(ans, nums[i] - nums[i - k + 1])
+
+    return ans
+
+
+===========================C++ Solution====================================
+class Solution {
+ public:
+  int minimumDifference(vector<int>& nums, int k) {
+    ranges::sort(nums);
+
+    int ans = nums[k - 1] - nums[0];
+
+    for (int i = k; i < nums.size(); ++i)
+      ans = min(ans, nums[i] - nums[i - k + 1]);
+
+    return ans;
+  }
+};
+
+
+=========================JavaScript Solution==============================
+class Solution {
+    minimumDifference(nums, k) {
+        nums.sort((a, b) => a - b);
+
+        let ans = nums[k - 1] - nums[0];
+
+        for (let i = k; i < nums.length; i++) {
+            ans = Math.min(ans, nums[i] - nums[i - k + 1]);
+        }
+
+        return ans;
+    }
+}
+
+
+Company Asked: 
+Amazon
+Google
+Meta
+Tinkoff
