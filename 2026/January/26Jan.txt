@@ -1,0 +1,124 @@
+📌 Leetcode Daily – 26 January 2026
+
+❓ Problem Statement:
+1200. Minimum Absolute Difference
+
+📝 Difficulty:
+⭐ Easy
+
+## 🤝 Support
+Want to Support a POTD or solution?  
+Way1: http://buymeacoffee.com/karthikverma
+Way2: https://ko-fi.com/karthikverma
+
+## 🔗 Connect With Me
+- 📺 YouTube: https://www.youtube.com/channel/UCUUPCqRPzEsX-KgM8i7E8Dg
+- 🔗 Campus Prepp Website: https://campusprepp.myinstamojo.com/
+
+⭐ **Star this repo if it helps you!**
+
+🧠 Solution:
+=========================Java Solution====================================
+class Solution {
+  public List<List<Integer>> minimumAbsDifference(int[] arr) {
+    List<List<Integer>> ans = new ArrayList<>();
+    int mn = Integer.MAX_VALUE;
+
+    Arrays.sort(arr);
+
+    for (int i = 1; i < arr.length; ++i) {
+      final int diff = arr[i] - arr[i - 1];
+      if (diff < mn) {
+        mn = diff;
+        ans.clear();
+      }
+      if (diff == mn)
+        ans.add(Arrays.asList(arr[i - 1], arr[i]));
+    }
+
+    return ans;
+  }
+}
+
+
+===========================Python Solution=================================
+class Solution:
+  def minimumAbsDifference(self, arr: list[int]) -> list[list[int]]:
+    ans = []
+    mn = math.inf
+
+    arr.sort()
+
+    for a, b in itertools.pairwise(arr):
+      diff = b - a
+      if diff < mn:
+        mn = diff
+        ans = []
+      if diff == mn:
+        ans.append([a, b])
+
+    return ans
+
+
+===========================C++ Solution====================================
+class Solution {
+ public:
+  vector<vector<int>> minimumAbsDifference(vector<int>& arr) {
+    vector<vector<int>> ans;
+    int mn = INT_MAX;
+
+    ranges::sort(arr);
+
+    for (int i = 1; i < arr.size(); ++i) {
+      const int diff = arr[i] - arr[i - 1];
+      if (diff < mn) {
+        mn = diff;
+        ans.clear();
+      }
+      if (diff == mn)
+        ans.push_back({arr[i - 1], arr[i]});
+    }
+
+    return ans;
+  }
+};
+
+
+=========================JavaScript Solution==============================
+class Solution {
+ public:
+  vector<vector<int>> minimumAbsDifference(vector<int>& arr) {
+    vector<vector<int>> ans;
+    int mn = INT_MAX;
+
+    ranges::sort(arr);
+
+    for (int i = 1; i < arr.size(); ++i) {
+      const int diff = arr[i] - arr[i - 1];
+      if (diff < mn) {
+        mn = diff;
+        ans.clear();
+      }
+      if (diff == mn)
+        ans.push_back({arr[i - 1], arr[i]});
+    }
+
+    return ans;
+  }
+};
+
+
+Company Asked: 
+JPMorgan Chase
+Google
+Audible
+Salesforce
+Amazon
+Bloomberg
+Ibm
+Morgan Stanley
+Oracle
+PayPal
+Uber
+Agoda
+Paycom
