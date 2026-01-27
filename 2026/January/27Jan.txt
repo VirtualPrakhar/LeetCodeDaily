@@ -1,0 +1,218 @@
+📌 Leetcode Daily – 27 January 2026
+
+❓ Problem Statement:
+3650. Minimum Cost Path with Edge Reversals
+
+📝 Difficulty:
+⭐ Medium
+
+## 🤝 Support
+Want to Support a POTD or solution?  
+Way1: http://buymeacoffee.com/karthikverma
+Way2: https://ko-fi.com/karthikverma
+
+## 🔗 Connect With Me
+- 📺 YouTube: https://www.youtube.com/channel/UCUUPCqRPzEsX-KgM8i7E8Dg
+- 🔗 Campus Prepp Website: https://campusprepp.myinstamojo.com/
+
+⭐ **Star this repo if it helps you!**
+
+🧠 Solution:
+=========================Java Solution====================================
+class Solution {
+    public int minCost(int n, int[][] edges) {
+
+        List<List<int[]>> graph = new ArrayList<>();
+        boolean[] visited = new boolean[n];
+        int[] minCost = new int[n];
+        Arrays.fill(minCost, (int)Math.pow(10,8));
+        
+        for(int i = 0; i < n; i++){
+            graph.add(new ArrayList<>());
+        }
+
+        for(int[] edge : edges){
+            int u    = edge[0];
+            int v    = edge[1];
+            int cost = edge[2];
+            graph.get(u).add(new int[]{v, cost});
+            graph.get(v).add(new int[]{u, 2 * cost}); // Add Switch Too
+        }
+
+        // Do Dijkstra's Algorithm
+        minCost[0] = 0;
+        PriorityQueue<int[]> pq = new PriorityQueue<>((n1, n2) -> Integer.compare(n1[1], n2[1]));
+        pq.offer(new int[]{0, 0});
+        while(!pq.isEmpty() && !visited[n-1]){
+            int[] curr = pq.poll();
+            if(visited[curr[0]]) continue;
+            visited[curr[0]] = true;
+            for(int[] nei : graph.get(curr[0])){
+                if(visited[nei[0]]) continue;
+                int newDis = nei[1] + minCost[curr[0]];
+                if(minCost[nei[0]] > newDis){
+                    minCost[nei[0]] = newDis;
+                    pq.offer(new int[]{nei[0], newDis});
+                }
+            }
+        }
+
+        if(visited[n-1]) return minCost[n-1];
+        return -1;
+    }
+}
+
+
+===========================Python Solution=================================
+import heapq
+
+class Solution:
+    def minCost(self, n, edges):
+        graph = [[] for _ in range(n)]
+        visited = [False] * n
+        minCost = [10**8] * n
+
+        for u, v, cost in edges:
+            graph[u].append((v, cost))
+            graph[v].append((u, 2 * cost))  # switch cost
+
+        minCost[0] = 0
+        pq = [(0, 0)]  # (cost, node)
+
+        while pq and not visited[n - 1]:
+            currCost, u = heapq.heappop(pq)
+            if visited[u]:
+                continue
+            visited[u] = True
+
+            for v, w in graph[u]:
+                if visited[v]:
+                    continue
+                newCost = currCost + w
+                if minCost[v] > newCost:
+                    minCost[v] = newCost
+                    heapq.heappush(pq, (newCost, v))
+
+        return minCost[n - 1] if visited[n - 1] else -1
+
+
+===========================C++ Solution====================================
+class Solution {
+public:
+    int minCost(int n, vector<vector<int>>& edges) {
+        vector<vector<pair<int,int>>> graph(n);
+        vector<bool> visited(n, false);
+        vector<int> minCost(n, 1e8);
+
+        for (auto &e : edges) {
+            int u = e[0], v = e[1], cost = e[2];
+            graph[u].push_back({v, cost});
+            graph[v].push_back({u, 2 * cost}); // switch
+        }
+
+        priority_queue<pair<int,int>, vector<pair<int,int>>, greater<>> pq;
+        minCost[0] = 0;
+        pq.push({0, 0}); // {cost, node}
+
+        while (!pq.empty() && !visited[n - 1]) {
+            auto [currCost, u] = pq.top();
+            pq.pop();
+
+            if (visited[u]) continue;
+            visited[u] = true;
+
+            for (auto &[v, w] : graph[u]) {
+                if (visited[v]) continue;
+                int newCost = currCost + w;
+                if (minCost[v] > newCost) {
+                    minCost[v] = newCost;
+                    pq.push({newCost, v});
+                }
+            }
+        }
+
+        return visited[n - 1] ? minCost[n - 1] : -1;
+    }
+};
+
+
+=========================JavaScript Solution==============================
+class MinHeap {
+    constructor() {
+        this.heap = [];
+    }
+    push(item) {
+        this.heap.push(item);
+        this.bubbleUp();
+    }
+    pop() {
+        if (this.heap.length === 1) return this.heap.pop();
+        const top = this.heap[0];
+        this.heap[0] = this.heap.pop();
+        this.bubbleDown();
+        return top;
+    }
+    bubbleUp() {
+        let i = this.heap.length - 1;
+        while (i > 0) {
+            let p = Math.floor((i - 1) / 2);
+            if (this.heap[p][0] <= this.heap[i][0]) break;
+            [this.heap[p], this.heap[i]] = [this.heap[i], this.heap[p]];
+            i = p;
+        }
+    }
+    bubbleDown() {
+        let i = 0;
+        while (true) {
+            let l = 2 * i + 1, r = 2 * i + 2, smallest = i;
+            if (l < this.heap.length && this.heap[l][0] < this.heap[smallest][0])
+                smallest = l;
+            if (r < this.heap.length && this.heap[r][0] < this.heap[smallest][0])
+                smallest = r;
+            if (smallest === i) break;
+            [this.heap[i], this.heap[smallest]] = [this.heap[smallest], this.heap[i]];
+            i = smallest;
+        }
+    }
+    isEmpty() {
+        return this.heap.length === 0;
+    }
+}
+
+class Solution {
+    minCost(n, edges) {
+        const graph = Array.from({ length: n }, () => []);
+        const visited = Array(n).fill(false);
+        const minCost = Array(n).fill(1e8);
+
+        for (const [u, v, cost] of edges) {
+            graph[u].push([v, cost]);
+            graph[v].push([u, 2 * cost]); // switch
+        }
+
+        minCost[0] = 0;
+        const pq = new MinHeap();
+        pq.push([0, 0]); // [cost, node]
+
+        while (!pq.isEmpty() && !visited[n - 1]) {
+            const [currCost, u] = pq.pop();
+            if (visited[u]) continue;
+            visited[u] = true;
+
+            for (const [v, w] of graph[u]) {
+                if (visited[v]) continue;
+                const newCost = currCost + w;
+                if (minCost[v] > newCost) {
+                    minCost[v] = newCost;
+                    pq.push([newCost, v]);
+                }
+            }
+        }
+
+        return visited[n - 1] ? minCost[n - 1] : -1;
+    }
+}
+
+
+Company Asked: 
+will update soon
